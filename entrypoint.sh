@@ -3,20 +3,26 @@ set -e
 
 echo "🚀 Démarrage de l'application Django..."
 
-# Sur Render - attendre la BD et appliquer les migrations
-if [ ! -z "$DATABASE_URL" ]; then
-    echo "⏳ Attente de PostgreSQL..."
-    python wait_for_db.py || {
-        echo "⚠️  BD non disponible immédiatement, mais on continue..."
-    }
-    
-    echo "📦 Application des migrations..."
-    python manage.py migrate --noinput --verbosity 2 || {
-        echo "❌ Migrations failed! Database may not be ready yet."
-    }
-    
-    echo "👤 Création superuser si nécessaire..."
-    python << 'END' || true
+# Vérifier si DATABASE_URL est défini
+if [ -z "$DATABASE_URL" ]; then
+    echo "⚠️  DATABASE_URL n'est PAS défini!"
+else
+    echo "ℹ️  DATABASE_URL est défini"
+fi
+
+echo "⏳ Attente de PostgreSQL..."
+python wait_for_db.py || {
+    echo "⚠️  BD non disponible immédiatement, mais on continue..."
+}
+
+echo "📦 Application des migrations (FORCÉ)..."
+python manage.py migrate --noinput --verbosity 2 2>&1 | head -50 || {
+    echo "❌ ERREUR lors des migrations - détails ci-dessus"
+    echo "⚠️  Continuant quand même..."
+}
+
+echo "👤 Création superuser si nécessaire..."
+python << 'END' || echo "⚠️ Superuser creation had issues"
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'monprojet.settings')
 import django
@@ -32,7 +38,6 @@ try:
 except Exception as e:
     print(f"⚠️ Superuser error: {e}")
 END
-fi
 
 echo "📁 Collecte des fichiers statiques..."
 python manage.py collectstatic --noinput --clear --verbosity 0 2>&1 | tail -3 || true
