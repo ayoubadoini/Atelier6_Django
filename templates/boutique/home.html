@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Boutique Django{% endblock %}
+
+{% block extra_css %}
+<style>
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    .product-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .product-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .product-name {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+    .product-body {
+        padding: 1rem;
+    }
+    .product-price {
+        font-size: 1.5rem;
+        color: #e74c3c;
+        font-weight: bold;
+        margin: 0.5rem 0;
+    }
+    .product-stock {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin: 0.5rem 0;
+    }
+    .stock-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+    .in-stock {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .out-of-stock {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.6rem 1.2rem;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        margin-top: 0.5rem;
+    }
+    .btn:hover {
+        background-color: #2980b9;
+    }
+    .empty-message {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Bienvenue dans notre boutique</h2>
+<p>Découvrez nos produits exclusifs.</p>
+
+{% if products %}
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-header">
+                <div class="product-name">{{ product.name }}</div>
+            </div>
+            <div class="product-body">
+                {% if product.description %}
+                    <p>{{ product.description|truncatewords:15 }}</p>
+                {% endif %}
+                <div class="product-price">{{ product.price }}€</div>
+                <div class="product-stock">
+                    {% if product.stock > 0 %}
+                        <span class="stock-badge in-stock">Stock: {{ product.stock }}</span>
+                    {% else %}
+                        <span class="stock-badge out-of-stock">Rupture de stock</span>
+                    {% endif %}
+                </div>
+                <a href="{% url 'product_detail' product.pk %}" class="btn">Voir détails</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-message">
+        <h3>Aucun produit disponible</h3>
+        <p>Veuillez ajouter des produits depuis l'interface d'administration.</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Boutique Django{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        nav {
+            background-color: #34495e;
+            padding: 0.75rem 1.5rem;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1rem;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #3498db;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🛍️ Boutique Django</h1>
+    </header>
+    <nav>
+        <a href="/">Accueil</a>
+        <a href="/admin">Admin</a>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <footer>
+        <p>&copy; 2024 Boutique Django - TP Docker & Render</p>
+    </footer>
+</body>
+</html>
