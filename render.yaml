@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: atelier6-django
+    env: docker
+    plan: free
+    
+    # Variables d'environnement
+    envVars:
+      - key: DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: "atelier6-django.onrender.com"
+      - key: POSTGRES_DB
+        value: "mydb"
+      - key: POSTGRES_USER
+        value: "myuser"
+      - key: POSTGRES_PASSWORD
+        sync: false
+      - key: POSTGRES_HOST
+        value: "localhost"
+      - key: POSTGRES_PORT
+        value: "5432"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://atelier6-django.onrender.com"
+    
+    # Commandes pour initialiser la BD et les fichiers statiques
+    preDeployCommand: |
+      python manage.py migrate && \
+      python manage.py collectstatic --noinput
+    
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn monprojet.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    
+    # Restart policy
+    autoDeploy: true
