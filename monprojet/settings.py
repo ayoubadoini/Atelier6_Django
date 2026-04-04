@@ -70,13 +70,14 @@ if 'DATABASE_URL' in os.environ:
         )
     }
 else:
+    # Development mode - use individual PostgreSQL env variables
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': config('POSTGRES_DB', default='mydb'),
             'USER': config('POSTGRES_USER', default='myuser'),
             'PASSWORD': config('POSTGRES_PASSWORD', default='mypassword'),
-            'HOST': config('POSTGRES_HOST', default='db'),
+            'HOST': config('POSTGRES_HOST', default='localhost'),
             'PORT': config('POSTGRES_PORT', default='5432'),
         }
     }
