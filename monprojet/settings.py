@@ -4,6 +4,8 @@ Django settings for monprojet project.
 
 from pathlib import Path
 from decouple import config
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,16 +61,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'monprojet.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB', default='mydb'),
-        'USER': config('POSTGRES_USER', default='myuser'),
-        'PASSWORD': config('POSTGRES_PASSWORD', default='mypassword'),
-        'HOST': config('POSTGRES_HOST', default='db'),
-        'PORT': config('POSTGRES_PORT', default='5432'),
+# Try to use DATABASE_URL (Render) first, otherwise fallback to individual variables (dev)
+if 'DATABASE_URL' in os.environ:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('POSTGRES_DB', default='mydb'),
+            'USER': config('POSTGRES_USER', default='myuser'),
+            'PASSWORD': config('POSTGRES_PASSWORD', default='mypassword'),
+            'HOST': config('POSTGRES_HOST', default='db'),
+            'PORT': config('POSTGRES_PORT', default='5432'),
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
